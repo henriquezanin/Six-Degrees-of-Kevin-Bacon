@@ -20,8 +20,6 @@ Error *addEdge(int,int,int, Graph *);
 Error *addNode(int,Graph *);
 Error *freeGraph(Graph *);
 int getWeight(int, int, Graph *);
-Error *DepthFirstSearch(Graph *, int);
 Error *BreadthFirstSearch(Graph *, int);
-Error *DepthFirstSearchNonRecursive(Graph *, int );
 
 #endif

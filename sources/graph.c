@@ -7,7 +7,6 @@
 #include <string.h>
 #include <utils.h>
 #include <queue.h>
-#include <stack.h>
 #include <linkedList.h>
 #include <graph.h>
 
@@ -55,6 +54,7 @@ Error *addNode(int id,Graph *graph){
 }
 
 //Adciona uma nova aresta entre dois nós
+//Implementar para um grafo não direcionado
 Error *addEdge(int from, int to, int weight, Graph *graph){
     Error *err = newError();
     if(!graph){
@@ -77,6 +77,7 @@ Error *addEdge(int from, int to, int weight, Graph *graph){
 }
 
 //Remove uma dada aresta
+//Implemetar remoção para não direcionado
 Error *removeEdge(int from, int to, Graph *graph){
     Error *err = newError();
     if(!graph){
@@ -107,15 +108,18 @@ Error *removeEdge(int from, int to, Graph *graph){
 Error *removeNode(int id, Graph *graph){
     Error *err = newError();
     if(!graph){
+        err = newError();
         ErrorFormat("removeNode: Null graph", err);
         return err;
     }
     if(id >= graph->nNodes){
+        err = newError();
         ErrorFormat("removeNode: node out of range", err);
         return err;
     }
     int i;
     int nElements = graph->list[id]->nElements;
+    //Falta a remoção das arestas
     void **elements = freeList(graph->list[id]);
     for(i=0;i<nElements;i++)
         free(elements[i]);
@@ -154,40 +158,6 @@ int getWeight(int from, int to, Graph *graph){
     return edge->weight;
 }
 
-//Etapa recursiva da busca em profundidade
-void _dfs(Graph *graph, int initial, unsigned char *marked){
-    marked[initial] = 1;
-    int nodeID;
-    listElement *node = graph->list[initial]->first;
-    while(node){
-        nodeID = node->id;
-        if(!marked[nodeID]){
-            graph->edgeTo[nodeID] = initial;
-            _dfs(graph, nodeID, marked);
-        }
-        node = node->next;
-    }
-}
-
-/*Chama a busca em profundidade recursiva e reseta o vetor que permite reconstruir o caminho
-para um dado nó */
-Error *DepthFirstSearch(Graph *graph, int initial){
-    Error *err = newError();
-    if(!graph){
-        ErrorFormat("dfs: Null graph", err);
-        return err;
-    }
-    if(initial >= graph->nNodes || initial < 0){
-        ErrorFormat("dfs: initial node doesn't exists", err);
-        return err;
-    }
-    memset(graph->edgeTo,-1,sizeof(int)*graph->nNodes);
-    unsigned char *marked = (unsigned char*) calloc(graph->nNodes, sizeof(unsigned char));
-    _dfs(graph, initial, marked);
-    free(marked);
-    return err;
-}
-
 /*Executa a busca em largura e reseta o vetor que permite reconstruir o caminho
 para um dado nó */
 Error *BreadthFirstSearch(Graph *graph, int initial){
@@ -219,55 +189,6 @@ Error *BreadthFirstSearch(Graph *graph, int initial){
                 marked[nodeEdges[i]] = 1;
                 enqueue(nodeEdges[i], queue);
                 graph->edgeTo[nodeEdges[i]] = node;
-            }
-        }
-        free(nodeEdges);
-    }
-    free(marked);
-    return err;
-}
-/*Opera da mesma forma que a busca em profundidade porém de forma não recursiva
-*Reseta o vetor que permite reconstruir o caminho para um dado nó */
-Error *DepthFirstSearchNonRecursive(Graph *graph, int initial){
-    Error *err = newError();
-    if(!graph){
-        ErrorFormat("dfs: Null graph", err);
-        return err;
-    }
-    if(initial >= graph->nNodes || initial < 0){
-        ErrorFormat("dfs: initial node doesn't exists", err);
-        return err;
-    }
-    memset(graph->edgeTo,-1,sizeof(int)*graph->nNodes);
-    unsigned char *marked = (unsigned char*) calloc(graph->nNodes, sizeof(unsigned char));
-    int node,i,nEdges;
-    int *nodeEdges;
-    Stack *stack = newStack();
-    push(initial, stack);
-    while(!stackIsEmpty(stack)){
-        node = getStackTop(stack, err);
-        if(hasError(err)){
-            ErrorFormat("DepthFirstSearchNonRecusrive: Failed to get stack top", err);
-            return err;
-        }
-        nodeEdges = getAllIdElements(graph->list[node]);
-        nEdges = getListSize(graph->list[node]);
-        for(i=0;i<nEdges && marked[nodeEdges[i]];i++);
-        if(i != nEdges){
-            graph->edgeTo[nodeEdges[i]] = node;
-            marked[nodeEdges[i]] = 1;
-            node = nodeEdges[i];
-            err = push(node, stack);
-            if(hasError(err)){
-                ErrorFormat("DepthFirstSearchNonRecursive: Failed to push stack item", err);
-                return err;
-            }
-        }
-        else{
-            node = pop(stack, err);
-            if(hasError(err)){
-                ErrorFormat("DepthFirstSearchNonRecursive: Failed to pop stack item", err);
-                return err;
             }
         }
         free(nodeEdges);
