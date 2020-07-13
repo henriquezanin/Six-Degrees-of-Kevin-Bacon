@@ -7,10 +7,7 @@
 #include <graph.h>
 
 /*
-* A Implementação está definida para um grafo direcionado ponderado
-* OBS: Todas as buscas retornam o mesmo caminho devido ao tamanho do grafo
-* e a casualidade da inserção ser ordenada.
-* A lista insere sempre no começo.
+* A Implementação está definida para um grafo não direcionado ponderado
 */
 int main(int argc, char *argv[]){
     Error *err;
@@ -20,31 +17,13 @@ int main(int argc, char *argv[]){
     * de computadores, proposto na primeira aula de grafos
     */
     for(i=0;i<5;i++){
-        err = addEdge(i, i+1, 2100, graph);
+        err = addUndirectedEdge(i, i+1, 2100, graph);
         if(hasError(err)){
             PrintError(err);
             freeError(err);
             return 1;
         }
         printf("Weight(%d,%d):%d\n",i,i+1,getWeight(i,i+1,graph));
-    }
-    for(i=0;i<4;i++){
-        err = addEdge(i, i+2, 3200, graph);
-        if(hasError(err)){
-            PrintError(err);
-            freeError(err);
-            return 1;
-        }
-        printf("Weight(%d,%d):%d\n",i,i+2,getWeight(i,i+2,graph));
-    }
-    for(i=0;i<3;i++){
-        err = addEdge(i, i+3, 4200, graph);
-        if(hasError(err)){
-            PrintError(err);
-            freeError(err);
-            return 1;
-        }
-        printf("Weight(%d,%d):%d\n",i,i+3,getWeight(i,i+3,graph));
     }
     //Execução da busca em largura, preenche o vetor de ultimo caminho conhecido para o nó
     err = BreadthFirstSearch(graph, 0);
@@ -56,6 +35,14 @@ int main(int argc, char *argv[]){
     for(i=0;i<graph->nNodes;i++)
         printf("[%d]-> [%d]\t", graph->edgeTo[i], i);
     printf("\n");
+    for(i=0;i<5;i++){
+        err = removeUndirectedEdge(i, i+1,graph);
+        if(hasError(err)){
+            PrintError(err);
+            freeError(err);
+            return 1;
+        }
+    }
     //Libera a memória
     freeGraph(graph);
     return 0;

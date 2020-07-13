@@ -48,25 +48,30 @@ Error *addNode(int id,Graph *graph){
         memset(&graph->edgeTo[graph->nNodes],-1,sizeof(int)*(id+1));
         graph->nNodes = id+1;
     }
+    else if(id < graph->nNodes && !graph->list[id]){
+        graph->list[id] = newList();
+    }
     else
         ErrorFormat("addNode: Node already exists", err);
     return err;
 }
 
 //Adciona uma nova aresta entre dois nós
-//Implementar para um grafo não direcionado
-Error *addEdge(int from, int to, int weight, Graph *graph){
-    Error *err = newError();
+Error *addDirectedEdge(int from, int to, int weight, Graph *graph){
+    Error *err;
     if(!graph){
-        ErrorFormat("addEdge: Null graph", err);
+        err  = newError();
+        ErrorFormat("addDirectedEdge: Null graph", err);
         return err;
     }
     if(from < 0 || to < 0){
-        ErrorFormat("addEdge: Negative value to node or edge", err);
+        err  = newError();
+        ErrorFormat("addDirectedEdge: Negative value to node or edge", err);
         return err;
     }
     if(from > graph->nNodes || to > graph->nNodes){
-        ErrorFormat("addEdge: Impossible to create edge, nodes does not exists", err);
+        err  = newError();
+        ErrorFormat("addDirectedEdge: Impossible to create edge, nodes does not exists", err);
         return err;
     }
     if(!graph->list[from])
@@ -77,27 +82,38 @@ Error *addEdge(int from, int to, int weight, Graph *graph){
 }
 
 //Remove uma dada aresta
-//Implemetar remoção para não direcionado
-Error *removeEdge(int from, int to, Graph *graph){
+Error *removeDirectedEdge(int from, int to, Graph *graph){
     Error *err = newError();
     if(!graph){
-        ErrorFormat("removeEdge: Null graph", err);
+        ErrorFormat("removeDirectedEdge: Null graph", err);
         return err;
     }
     if(from < 0 || to < 0){
-        ErrorFormat("RemoveEdge: Negative value to node or edge", err);
+        ErrorFormat("removeDirectedEdge: Negative value to node or edge", err);
         return err;
     }
     if(from > graph->nNodes || to > graph->nNodes){
-        ErrorFormat("removeEdge: Impossible to remove edge, nodes does not exists", err);
+        ErrorFormat("removeDirectedEdge: Impossible to remove edge, nodes does not exists", err);
         return err;
     }
     Edge *edge = removeElementById(to, graph->list[from]);
-    if(!edge){
-        ErrorFormat("removeEdge: Null list", err);
-        return err;
-    }
     free(edge);
+    return err;
+}
+
+Error *addUndirectedEdge(int node1, int node2, int weight, Graph *graph){
+    Error *err = addDirectedEdge(node1, node2, weight, graph);
+    if(hasError(err))
+        return err;
+    err = addDirectedEdge(node2, node1, weight, graph);
+    return err;
+}
+
+Error *removeUndirectedEdge(int node1, int node2, Graph *graph){
+    Error *err = removeDirectedEdge(node1, node2, graph);
+    if(hasError(err))
+        return err;
+    err = removeDirectedEdge(node2, node1, graph);
     return err;
 }
 
@@ -106,7 +122,7 @@ Error *removeEdge(int from, int to, Graph *graph){
 * indexador de todos os nós
 */
 Error *removeNode(int id, Graph *graph){
-    Error *err = newError();
+    Error *err;
     if(!graph){
         err = newError();
         ErrorFormat("removeNode: Null graph", err);
@@ -118,34 +134,46 @@ Error *removeNode(int id, Graph *graph){
         return err;
     }
     int i;
-    int nElements = graph->list[id]->nElements;
-    //Falta a remoção das arestas
-    void **elements = freeList(graph->list[id]);
-    for(i=0;i<nElements;i++)
-        free(elements[i]);
-    free(elements);
+    for(i=0;i<graph->nNodes;i++){
+        err = removeUndirectedEdge(id,i,graph);
+        if(hasError(err)){
+            ErrorFormat("failed to remove edge:", err);
+            return err;
+        }
+    }
+    err = newError();
+    int nElements;
+    void **elements;
+    if(graph->list[id]){
+        nElements = graph->list[id]->nElements;
+        elements = freeList(graph->list[id]);
+        for(i=0;i<nElements;i++){
+            free(elements[i]);
+        }
+        free(elements);
+    }
+    graph->list[id] = NULL;
     return err;
 }
 
 // Desaloca toda a memória ocupada pelo grafo
 Error *freeGraph(Graph *graph){
-    Error *err = newError();
+    Error *err;
     if(!graph){
+        err = newError();
         ErrorFormat("freeGraph: Null graph", err);
         return err;
     }
-    int i,j, nElements;
-    void **elements;
+    int i;
     for(i=0;i<graph->nNodes;i++){
-        nElements = graph->list[i]->nElements;
-        elements = freeList(graph->list[i]);
-        for(j=0;j<nElements;j++){
-            free(elements[j]);
+        err = removeNode(i, graph);
+        if(hasError(err)){
+            ErrorFormat("freeGraph: failed to remove node", err);
+            return err;
         }
-        if(elements)
-            free(elements);
     }
-    return err;
+    free(graph);
+    return newError();
 }
 
 //Retorna o peso de uma determinada aresta

@@ -16,8 +16,12 @@ typedef struct graph{
 }Graph;
 
 Graph *newGraph(int);
-Error *addEdge(int,int,int, Graph *);
+Error *addDirectedEdge(int,int,int, Graph *);
+Error *removeDirectedEdge(int , int , Graph *);
+Error *addUndirectedEdge(int,int,int, Graph *);
+Error *removeUndirectedEdge(int , int , Graph *);
 Error *addNode(int,Graph *);
+Error *removeNode(int, Graph *);
 Error *freeGraph(Graph *);
 int getWeight(int, int, Graph *);
 Error *BreadthFirstSearch(Graph *, int);

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <utils.h>
+#include <graph.h>
 #include <linkedList.h>
 
 List *newList(){
@@ -20,7 +21,7 @@ Error *addElement(int id,void *element, int pos,List *list){
         ErrorFormat("addElement: Null List", err);
         return err;
     }
-    if(pos > list->nElements || pos < 0){
+    else if(pos > list->nElements || pos < 0){
         ErrorFormat("addElement: invalid position", err);
         return err;
     }
@@ -136,6 +137,7 @@ int removeElement(int pos, List *list, Error *err){
     old = *p;
     *p = old->next;
     id = old->id;
+    free(old->element);
     free(old);
     list->nElements--;
     return id;
@@ -171,18 +173,21 @@ int removeLast(List *list, Error *err){
 void *removeElementById(int id, List *list){
     if(!list)
         return NULL;
-    listElement **next = &list->first;
+    if(!list->nElements)
+        return NULL;
+    listElement **p = &list->first;
     listElement *old;
     void *element = NULL;
-    while(*next && (*next)->next && (*next)->next->id != id){
-        next = &(*next)->next; 
+    while(*p && (*p)->id != id){
+        p = &(*p)->next; 
     }
-    if(*next && (*next)->next && (*next)->next->id == id){
-        old = (*next)->next;
-        *next = old->next;
+    if(*p){
+        old = *p;
+        *p = old->next;
         element = old->element;
         free(old);
     }
+    list->nElements--;
     return element;
 }
 
