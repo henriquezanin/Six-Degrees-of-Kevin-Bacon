@@ -144,7 +144,7 @@ Error *removeNode(int id, Graph *graph){
     err = newError();
     int nElements;
     void **elements;
-    if(graph->list[id]){
+    if(graph->list[id]->nElements){
         nElements = graph->list[id]->nElements;
         elements = freeList(graph->list[id]);
         for(i=0;i<nElements;i++){
@@ -223,4 +223,22 @@ Error *BreadthFirstSearch(Graph *graph, int initial){
     }
     free(marked);
     return err;
+}
+
+int *pathTo(int from,int to, Graph *graph, int *size){
+    *size = 0;
+    int *path = NULL;
+    unsigned char *marked = (unsigned char*)calloc(graph->nNodes, sizeof(unsigned char));
+    int node = from;
+    while(*size < graph->nNodes && node != to && !marked[node]){
+        (*size)++;
+        marked[node] = 1;
+        path = (int*)realloc(path, (*size)*sizeof(int));
+        path[(*size)-1] = node;
+        node = graph->edgeTo[node];
+    }
+    (*size)++;
+    path = (int*)realloc(path, (*size)*sizeof(int));
+    path[(*size)-1] = node;
+    return path;
 }

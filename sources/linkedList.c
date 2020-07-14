@@ -198,13 +198,14 @@ void **freeList(List *list){
     listElement *listItem = list->first;
     listElement *old;
     void **elements = NULL;
-    if(list->nElements)
+    if(list->nElements){
         elements = (void **)malloc(sizeof(void*)*list->nElements);
-    while(listItem){
-        old = listItem;
-        listItem = listItem->next;
-        elements[i] = old->element;
-        free(old);
+        while(listItem){
+            old = listItem;
+            listItem = listItem->next;
+            elements[i++] = old->element;
+            free(old);
+        }
     }
     free(list);
     return elements;

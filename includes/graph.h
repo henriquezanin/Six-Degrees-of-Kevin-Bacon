@@ -25,5 +25,6 @@ Error *removeNode(int, Graph *);
 Error *freeGraph(Graph *);
 int getWeight(int, int, Graph *);
 Error *BreadthFirstSearch(Graph *, int);
+int *pathTo(int ,int , Graph *, int *);
 
 #endif
