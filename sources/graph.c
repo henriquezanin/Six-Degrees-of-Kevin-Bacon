@@ -1,6 +1,9 @@
 /*
 * Nome: Henrique Gomes Zanin
 * nUSP: 10441321
+*
+* Nome: Gabriel Guimarães Vilas Boas Marin
+* nUSP: 11218521
 */
 #include <stdlib.h>
 #include <stdio.h>
