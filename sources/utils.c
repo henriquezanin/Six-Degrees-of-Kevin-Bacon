@@ -10,6 +10,25 @@
 #include <string.h>
 #include <utils.h>
 
+BOOL checkEndOfLine(char character){
+    if(strchr(EOL, character) || character == EOF) return TRUE;
+    else return FALSE;
+}
+
+char *readLine(FILE *fp){
+    char *textLine = NULL;
+    unsigned int size = 0;
+
+    do{
+        textLine = (char*)realloc(textLine, (size+1)*sizeof(char));
+        textLine[size] = fgetc(fp);
+    }while(!checkEndOfLine(textLine[size++]));
+    textLine[size-1] = '\0';
+
+    return textLine;
+}
+
+
 Error *newError(){
     return (Error *)calloc(1, sizeof(Error));
 }
