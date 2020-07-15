@@ -47,8 +47,9 @@ Error *addNode(int id,Graph *graph){
     if(id >= graph->nNodes){
         graph->list = (List**)realloc(graph->list, (id+1)*sizeof(List*));
         graph->list[id] = newList();
+        //printf("id: %d\n", id);
         graph->edgeTo = (int*)realloc(graph->edgeTo, (id+1)*sizeof(int));
-        memset(&graph->edgeTo[graph->nNodes],-1,sizeof(int)*(id+1));
+        memset(graph->edgeTo,-1,sizeof(int)*(id+1));
         graph->nNodes = id+1;
     }
     else if(id < graph->nNodes && !graph->list[id]){
@@ -106,8 +107,10 @@ Error *removeDirectedEdge(int from, int to, Graph *graph){
 
 Error *addUndirectedEdge(int node1, int node2, int weight, Graph *graph){
     Error *err = addDirectedEdge(node1, node2, weight, graph);
-    if(hasError(err))
+    if(hasError(err)){
+        ErrorFormat("addUndirectedEdge: Failed to add edge", err);
         return err;
+    }
     err = addDirectedEdge(node2, node1, weight, graph);
     return err;
 }
