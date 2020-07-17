@@ -1,6 +1,8 @@
 #ifndef __UTILS__
 #define __UTILS__
 
+#include <stdio.h>
+
 #define BOOL unsigned char
 #define TRUE 1
 #define FALSE 0
