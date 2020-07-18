@@ -32,16 +32,20 @@ Error* initializeGraph(Graph *graph, Dictionary *dict) {
             // movies = (MOVIE**) realloc(movies, (movieCounter+1)*sizeof(MOVIE*));
 
             moviePos = addDictionary(movie->name, dict->size, dict);
+            err = addNode(moviePos, graph);
             for (i = 0; i < movie->actorsCounter; i++) {
-                printf("%d <--- %s\n\n\n\n", i+1, movie->actors[i]);
+                printf("%d <--- %s\n", i+1, movie->actors[i]);
                 aux = getDictionaryKey(movie->actors[i], dict);
-                if (aux == -1) addUndirectedEdge(
-                    moviePos,
-                    addDictionary(movie->actors[i], dict->size, dict),
-                    1,
-                    graph
-                );
-                else addUndirectedEdge(
+                if (aux == -1) {
+                    aux = addDictionary(movie->actors[i], dict->size, dict);
+                    err = addNode(aux, graph);
+                    addUndirectedEdge(
+                        moviePos,
+                        aux,
+                        1,
+                        graph
+                    );
+                } else addUndirectedEdge(
                     moviePos,
                     aux,
                     1,

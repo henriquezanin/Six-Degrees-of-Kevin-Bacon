@@ -27,5 +27,7 @@ void freeError(Error *);
 char *readLine(FILE *);
 MOVIE* readMovie(FILE*);
 void printMovie(MOVIE*);
+int calcMedia();
+int calcStandardDeviation();
 
 #endif

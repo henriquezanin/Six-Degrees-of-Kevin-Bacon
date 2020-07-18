@@ -47,6 +47,8 @@ int main (int argc, char **argv) {
             // } else {
             //     printMovie(movie);
             // }
+            printf("Media Aritmética: %d\n", grafo->kevinBaconMedia);
+            printf("Desvio Padrão: %d\n", grafo->kevinBaconStandardDeviation);
             break;
         case 0:
             /* Finaliza o programa */
