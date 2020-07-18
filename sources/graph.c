@@ -48,7 +48,6 @@ Error *addNode(int id,Graph *graph){
         graph->list = (List**)realloc(graph->list, (id+1)*sizeof(List*));
         graph->list[id] = newList();
         graph->edgeTo = (int*)realloc(graph->edgeTo, (id+1)*sizeof(int));
-        memset(&graph->edgeTo[graph->nNodes],-1,sizeof(int)*(id+1));
         graph->nNodes = id+1;
     }
     else if(id < graph->nNodes && !graph->list[id]){

@@ -36,7 +36,7 @@ int main (int argc, char **argv) {
             break;
         case 2:
             /* Pesquisar ator e pegar seu numero de Kevin Bacon */
-            err = getKevinBaconNumber(grafo->graph, dict, "Pope, Tony", &KBNumber);
+            err = getKevinBaconNumber(grafo->graph, dict, "Thomsen, Ulrich", &KBNumber);
             if (hasError(err)) PrintError(err);
             break;
         case 3:
