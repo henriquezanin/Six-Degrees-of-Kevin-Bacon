@@ -10,6 +10,50 @@
 #include <string.h>
 #include <utils.h>
 
+char *readName(FILE *file, BOOL *endOfLine) {
+    char *name = (char*) calloc(2, sizeof(char));
+    int i = 0;
+
+    while (fscanf(file, "%c", &name[i]) && name[i] != '/' && name[i] != '\n' && !feof(file)) {
+        i++;
+        name = (char*) realloc(name, (i+1)*sizeof(char));
+    }
+    if (name[i] == '\n' || feof(file)) *endOfLine = TRUE;
+    name[i] = '\0';
+
+    return name;
+}
+
+MOVIE* readMovie(FILE *file) {
+    if (feof(file) || !file) return NULL;
+
+    int i = 0;
+    BOOL end = FALSE;
+    MOVIE *movie = (MOVIE*) calloc(1, sizeof(MOVIE));
+
+    movie->name = readName(file, &end);
+    movie->actors = (char**) calloc(1, sizeof(char*));
+
+    while ((movie->actors[i] = readName(file, &end)) && end != TRUE) {
+        i++;
+        movie->actorsCounter++;
+        movie->actors = (char**) realloc(movie->actors, (i+1)*sizeof(char*));
+    }
+    movie->actorsCounter++;
+
+    return movie;
+}
+
+void printMovie(MOVIE *movie) {
+    int i = 0;
+    printf("NAME: %s\n", movie->name);
+
+    for (i = 0; i < movie->actorsCounter; i++) {
+        printf("Actor %d: %s\n", i+1, movie->actors[i]);
+    }
+
+}
+
 BOOL checkEndOfLine(char character){
     if(strchr(EOL, character) || character == EOF) return TRUE;
     else return FALSE;

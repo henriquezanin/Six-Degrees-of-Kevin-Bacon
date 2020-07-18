@@ -13,11 +13,19 @@ typedef struct errMessage{
     char *message;
 }Error;
 
+typedef struct movieInfos {
+    char *name;
+    int actorsCounter;
+    char **actors;
+} MOVIE;
+
 Error *newError();
 void ErrorFormat(char *, Error *);
 unsigned int hasError(Error *);
 void PrintError(Error *);
 void freeError(Error *);
 char *readLine(FILE *);
+MOVIE* readMovie(FILE*);
+void printMovie(MOVIE*);
 
 #endif

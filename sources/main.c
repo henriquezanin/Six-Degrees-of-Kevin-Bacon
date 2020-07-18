@@ -23,6 +23,8 @@ int main (int argc, char **argv) {
     Dictionary *dict = createDictionary();
     GRAPH *grafo = createGraph();
     int KBNumber = 0;
+    
+
 
     do {
         operation = menu();
@@ -34,11 +36,17 @@ int main (int argc, char **argv) {
             break;
         case 2:
             /* Pesquisar ator e pegar seu numero de Kevin Bacon */
-            err = getKevinBaconNumber(grafo->graph, dict, "Joao", &KBNumber);
+            err = getKevinBaconNumber(grafo->graph, dict, "Pope, Tony", &KBNumber);
             if (hasError(err)) PrintError(err);
             break;
         case 3:
             /* Consulta média e desvio padrão de todos os números de Kevin Bacon do grafo */
+            // movie = readMovie(file);
+            // if (movie == NULL) {
+            //     printf("Arquvio todo já foi lido");
+            // } else {
+            //     printMovie(movie);
+            // }
             break;
         case 0:
             /* Finaliza o programa */
