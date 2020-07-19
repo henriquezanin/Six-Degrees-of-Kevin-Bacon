@@ -2,6 +2,8 @@
 #define __UTILS__
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define BOOL unsigned char
 #define TRUE 1
@@ -27,7 +29,6 @@ void freeError(Error *);
 char *readLine(FILE *);
 MOVIE* readMovie(FILE*);
 void printMovie(MOVIE*);
-int calcMedia();
-int calcStandardDeviation();
+void freeMovie(MOVIE*);
 
 #endif

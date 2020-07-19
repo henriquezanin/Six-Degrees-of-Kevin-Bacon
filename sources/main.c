@@ -23,6 +23,7 @@ int main (int argc, char **argv) {
     Dictionary *dict = createDictionary();
     GRAPH *grafo = createGraph();
     int KBNumber = 0;
+    char *searchName = NULL;
     
 
 
@@ -31,27 +32,30 @@ int main (int argc, char **argv) {
         switch (*operation) {
         case 1:
             /* Inicializar */
-            err = initializeGraph(grafo->graph, dict);
+            err = initializeGraph(grafo, grafo->graph, dict);
             if (hasError(err)) PrintError(err);
             break;
         case 2:
             /* Pesquisar ator e pegar seu numero de Kevin Bacon */
-            err = getKevinBaconNumber(grafo->graph, dict, "Thomsen, Ulrich", &KBNumber);
+            printf("\nDigite o nome que deseja buscar !!\nExemplo: Thomsen, Ulrich\n-> ");
+            // searchName = readLine(stdin);
+            searchName = (char*) malloc(100);
+            scanf("\n%[^\n]s", searchName);
+            printf("\n");
+            err = getKevinBaconNumber(grafo->graph, dict, searchName, &KBNumber);
             if (hasError(err)) PrintError(err);
             break;
         case 3:
             /* Consulta média e desvio padrão de todos os números de Kevin Bacon do grafo */
-            // movie = readMovie(file);
-            // if (movie == NULL) {
-            //     printf("Arquvio todo já foi lido");
-            // } else {
-            //     printMovie(movie);
-            // }
-            printf("Media Aritmética: %d\n", grafo->kevinBaconMedia);
-            printf("Desvio Padrão: %d\n", grafo->kevinBaconStandardDeviation);
+            printf("Media Aritmética: %f\n", grafo->kevinBaconMedia);
+            printf("Desvio Padrão: %f\n", grafo->kevinBaconStandardDeviation);
             break;
         case 0:
             /* Finaliza o programa */
+            printf("Aguarde, finalizando programa...");
+            freeGraph(grafo->graph);
+            freeError(err);
+            freeDictionary(dict);
             break;
         default:
             ErrorFormat("Codigo invalido", err);

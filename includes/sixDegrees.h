@@ -7,8 +7,8 @@
 
 struct graphHeader {
     Graph *graph;
-    int kevinBaconMedia;
-    int kevinBaconStandardDeviation;
+    float kevinBaconMedia;
+    float kevinBaconStandardDeviation;
     struct actorSearch *searchedActor;
 };
 
@@ -21,8 +21,11 @@ typedef struct graphHeader GRAPH;
 typedef struct actorSearch ACTOR;
 
 GRAPH* createGraph();
-Error* initializeGraph(Graph*, Dictionary*);
+Error* initializeGraph(GRAPH*, Graph*, Dictionary*);
 Error* getKevinBaconNumber(Graph*, Dictionary*, char*, int*);
+float calcMedia(Graph*, Dictionary*, int);
+float calcStandardDeviation(Graph*, Dictionary*, int);
+
 
 
 

@@ -5,9 +5,6 @@
 * Nome: Gabriel Guimarães Vilas Boas Marin
 * nUSP: 11218521
 */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <utils.h>
 
 char *readName(FILE *file, BOOL *endOfLine) {
@@ -101,4 +98,13 @@ void freeError(Error *err){
     if(!err) return;
     if(!err->message) free(err->message);
     free(err);
+}
+
+void freeMovie(MOVIE *movie) {
+    int i;
+
+    free(movie->name);
+    for (i = 0; i < movie->actorsCounter; i++) {
+        free(movie->actors[i]);
+    }
 }
