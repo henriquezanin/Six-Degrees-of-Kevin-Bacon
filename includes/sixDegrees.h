@@ -26,7 +26,4 @@ Error* getKevinBaconNumber(Graph*, Dictionary*, char*, int*);
 float calcMedia(Graph*, Dictionary*, int);
 float calcStandardDeviation(Graph*, Dictionary*, int);
 
-
-
-
 #endif

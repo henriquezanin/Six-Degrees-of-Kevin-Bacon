@@ -9,6 +9,10 @@ GRAPH* createGraph() {
     return grafo;
 }
 
+/*
+ Inicializa o grafo adicionando os filmes com seus atores 
+ Calcula as médias do grafo carregado
+*/
 Error* initializeGraph(GRAPH *grafo, Graph *graph, Dictionary *dict) {
     Error *err = newError();
     int i = 0, moviePos = 0, aux = 0;
@@ -26,6 +30,7 @@ Error* initializeGraph(GRAPH *grafo, Graph *graph, Dictionary *dict) {
 
         while((movie = readMovie(file)) && movie != NULL) {
 
+            /* Adiciona filmes e atores */
             moviePos = addDictionary(movie->name, dict->size, dict);
             err = addNode(moviePos, graph);
             printf("\n\nFILME: %s\n\n", movie->name);
@@ -51,6 +56,7 @@ Error* initializeGraph(GRAPH *grafo, Graph *graph, Dictionary *dict) {
             freeMovie(movie);
         }
 
+        /* Calcula as medias */
         aux = getDictionaryKey("Bacon, Kevin", dict);
         err = BreadthFirstSearch(graph, aux);
 
@@ -63,6 +69,7 @@ Error* initializeGraph(GRAPH *grafo, Graph *graph, Dictionary *dict) {
     return err;
 }
 
+/* Busca o numero de Kevin Bacon do ator pesquisado */
 Error* getKevinBaconNumber(Graph *graph, Dictionary *dict, char *actor, int *KBNumber) {
     Error *err = newError();
     if (!actor) {
@@ -102,12 +109,13 @@ Error* getKevinBaconNumber(Graph *graph, Dictionary *dict, char *actor, int *KBN
     return err;
 }
 
+/* Calcula media aritmética */
 float calcMedia(Graph *graph, Dictionary *dict, int kevinBaconPos) {
     int i, size = 0, counter = 0;
     float sum = 0;
     for (i = 0; i < dict->size; i++) {
         pathTo(i, kevinBaconPos, graph, &size);
-        if (size%2 == 1) {
+        if (size%2 == 1) { /* Filtra o caminho do ator para filmes, contando somente as rotas de ator para ator */
             sum += (size-1)/2;
             counter++;
         }
@@ -116,6 +124,7 @@ float calcMedia(Graph *graph, Dictionary *dict, int kevinBaconPos) {
     return (sum/counter);
 }
 
+/* Calcula o desvio padrão */
 float calcStandardDeviation(Graph *graph, Dictionary *dict, int kevinBaconPos) {
     int i, size = 0;
     int *kevinBaconNums = (int*) calloc(dict->size, sizeof(int));
@@ -123,7 +132,7 @@ float calcStandardDeviation(Graph *graph, Dictionary *dict, int kevinBaconPos) {
     float sum = 0, sigma = 0, p = 0;
     for (i = 0; i < dict->size; i++) {
         pathTo(i, kevinBaconPos, graph, &size);
-        if (size%2 == 1) {
+        if (size%2 == 1) { /* Filtra o caminho do ator para filmes, somando somente as rotas de ator para ator */
             kevinBaconNums[counter] = (size-1)/2;
             counter++;
         }
