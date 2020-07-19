@@ -158,6 +158,22 @@ Error *removeNode(int id, Graph *graph){
     return err;
 }
 
+Error *freeNode(List *node){
+    Error *err;
+    if(!node){
+        err = newError();
+        ErrorFormat("freeNode: null node", err);
+        return err;
+    }
+    int i;
+    int nElements = node->nElements;
+    void **elements = freeList(node);
+    for(i=0;i<nElements;i++){
+        free(elements[i]);
+    }
+    return newError();
+}
+
 // Desaloca toda a memória ocupada pelo grafo
 Error *freeGraph(Graph *graph){
     Error *err;
@@ -168,7 +184,8 @@ Error *freeGraph(Graph *graph){
     }
     int i;
     for(i=0;i<graph->nNodes;i++){
-        err = removeNode(i, graph);
+        //err = removeNode(i, graph);
+        err = freeNode(graph->list[i]);
         if(hasError(err)){
             ErrorFormat("freeGraph: failed to remove node", err);
             return err;
