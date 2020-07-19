@@ -43,6 +43,7 @@ int main (int argc, char **argv) {
             printf("\n");
             err = getKevinBaconNumber(grafo->graph, dict, searchName, &KBNumber);
             if (hasError(err)) PrintError(err);
+            free(searchName);
             break;
         case 3:
             /* Consulta média e desvio padrão de todos os números de Kevin Bacon do grafo */

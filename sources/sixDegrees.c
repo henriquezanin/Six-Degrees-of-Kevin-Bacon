@@ -83,8 +83,9 @@ Error* getKevinBaconNumber(Graph *graph, Dictionary *dict, char *actor, int *KBN
     int key = 0, secondKey = 0;
     int *path = NULL, size;
     int i;
+    char *temp = NULL;
 
-    printf("PROCURANDO POR: %s\n", actor);
+    printf("PROCURANDO POR: %s\n\n", actor);
     key = getDictionaryKey(actor, dict);
     if (key == -1) {
         ErrorFormat("Ator não encontrado", err);
@@ -97,15 +98,33 @@ Error* getKevinBaconNumber(Graph *graph, Dictionary *dict, char *actor, int *KBN
         return err;
     }
     path = pathTo(key, secondKey, graph, &size);
-    printf("Caminho: ");
-    for(i = 0; i < size; i++) {
-        if(i < size - 1)
-            printf("%s -> ", getDictionaryValue(path[i], dict));
-        else
-            printf("%s\n", getDictionaryValue(path[i], dict));
-    }
-    printf("Kevin Bacon number: %d\n\n", (size-1)/2);
+    printf("\"%s\" tem  KB = %d\n", actor, (size-1)/2);
 
+    int flag = 0;
+    for(i = 0; i < size-1; i++) {
+        if((i+1)%2 == 1) {
+            if (flag == 0) {
+                printf("\"%s\" atuou em ", getDictionaryValue(path[i], dict));
+                flag++;
+            } else if (flag == 1) {
+                temp = getDictionaryValue(path[i], dict);
+                printf(" com \"%s\"\n\"%s\" atuou em ", temp, temp);
+                flag++;
+            } else if (flag == 2) {
+                printf(" com \"%s\"\n", getDictionaryValue(path[i], dict));
+                flag = 0;
+                i--;
+            }
+        } else {
+            printf("\"%s\"", getDictionaryValue(path[i], dict));
+            // flag++;
+        }
+    }
+    if (flag == 1 || flag == 2) {
+        printf(" com \"Bacon, Kevin\"");
+    }
+
+    printf("\n\n");
     return err;
 }
 
