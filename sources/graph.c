@@ -13,7 +13,7 @@
 #include <linkedList.h>
 #include <graph.h>
 
-//Inicializa a lista e adjacências
+/* Inicializa a lista e adjacências */
 Graph *newGraph(int nNodes){
     Graph *graph = (Graph*)calloc(1,sizeof(Graph));
     graph->nNodes = nNodes;
@@ -29,7 +29,7 @@ Graph *newGraph(int nNodes){
     return graph;
 }
 
-//Instancia uma nova aresta e retorna o ponteiro para ser inserido na lista
+/* Instancia uma nova aresta e retorna o ponteiro para ser inserido na lista */
 Edge *_newEdge(int id, int weight){
     Edge *new = (Edge*)calloc(1, sizeof(Edge));
     new->node = id;
@@ -37,7 +37,7 @@ Edge *_newEdge(int id, int weight){
     return new;
 }
 
-//Adiciona um novo nó na lista de adjacências
+/* Adiciona um novo nó na lista de adjacências */
 Error *addNode(int id,Graph *graph){
     Error *err = newError();
     if(!graph){
@@ -47,9 +47,7 @@ Error *addNode(int id,Graph *graph){
     if(id >= graph->nNodes){
         graph->list = (List**)realloc(graph->list, (id+1)*sizeof(List*));
         graph->list[id] = newList();
-        //printf("id: %d\n", id);
         graph->edgeTo = (int*)realloc(graph->edgeTo, (id+1)*sizeof(int));
-        memset(graph->edgeTo,-1,sizeof(int)*(id+1));
         graph->nNodes = id+1;
     }
     else if(id < graph->nNodes && !graph->list[id]){
@@ -60,7 +58,7 @@ Error *addNode(int id,Graph *graph){
     return err;
 }
 
-//Adciona uma nova aresta entre dois nós
+/* Adciona uma nova aresta entre dois nós */
 Error *addDirectedEdge(int from, int to, int weight, Graph *graph){
     Error *err;
     if(!graph){
@@ -85,7 +83,7 @@ Error *addDirectedEdge(int from, int to, int weight, Graph *graph){
     return err;
 }
 
-//Remove uma dada aresta
+/* Remove uma dada aresta */
 Error *removeDirectedEdge(int from, int to, Graph *graph){
     Error *err = newError();
     if(!graph){
@@ -162,7 +160,23 @@ Error *removeNode(int id, Graph *graph){
     return err;
 }
 
-// Desaloca toda a memória ocupada pelo grafo
+Error *freeNode(List *node){
+    Error *err;
+    if(!node){
+        err = newError();
+        ErrorFormat("freeNode: null node", err);
+        return err;
+    }
+    int i;
+    int nElements = node->nElements;
+    void **elements = freeList(node);
+    for(i=0;i<nElements;i++){
+        free(elements[i]);
+    }
+    return newError();
+}
+
+/* Desaloca toda a memória ocupada pelo grafo */
 Error *freeGraph(Graph *graph){
     Error *err;
     if(!graph){
@@ -172,7 +186,7 @@ Error *freeGraph(Graph *graph){
     }
     int i;
     for(i=0;i<graph->nNodes;i++){
-        err = removeNode(i, graph);
+        err = freeNode(graph->list[i]);
         if(hasError(err)){
             ErrorFormat("freeGraph: failed to remove node", err);
             return err;
@@ -182,7 +196,7 @@ Error *freeGraph(Graph *graph){
     return newError();
 }
 
-//Retorna o peso de uma determinada aresta
+/* Retorna o peso de uma determinada aresta */
 int getWeight(int from, int to, Graph *graph){
     if(!graph)
         return -1;
@@ -192,7 +206,7 @@ int getWeight(int from, int to, Graph *graph){
     return edge->weight;
 }
 
-/*Executa a busca em largura e reseta o vetor que permite reconstruir o caminho
+/* Executa a busca em largura e reseta o vetor que permite reconstruir o caminho
 para um dado nó */
 Error *BreadthFirstSearch(Graph *graph, int initial){
     Error *err = newError();

@@ -7,71 +7,62 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <sixDegrees.h>
 #include <graph.h>
 #include <dictionary.h>
+#include <utils.h>
+#include <menu.h>
 
 /*
 * A Implementação está definida para um grafo não direcionado ponderado
 */
-int main(int argc, char *argv[]){
-    int i, size, *path;
+
+int main (int argc, char **argv) {
+    int *operation = NULL;
+    Error *err = newError();
     Dictionary *dict = createDictionary();
-    /*addDictionary(Valor, Chave, Dicionario);*/
-    addDictionary("Minduca", 0,dict);
-    addDictionary("Marin", 1,dict);
-    addDictionary("Jean", 8,dict);
-    addDictionary("Kel", 2,dict);
-    addDictionary("Marcola", 3,dict);
-    addDictionary("Castor", 4,dict);
-    addDictionary("Rock", 5,dict);
-    addDictionary("USP", 6,dict);
-    addDictionary("Familia Marin", 9,dict);
-    addDictionary("Andre", 10,dict);
-    addDictionary("UNESP", 7,dict);
-    for(i=0;i<dict->size;i++){
-        printf("%s\n",dict->elements[i]->string);
-    }
-    Error *err;
-    Graph *graph = newGraph(8);
-    addNode(8,graph);
-    addNode(9,graph);
-    addNode(10,graph);
-    /*addUndirectedEdge(nó,nó,peso,grafo)*/
-    err = addUndirectedEdge(0, 6, 1, graph);
-    err = addUndirectedEdge(0, 7, 1, graph);
-    err = addUndirectedEdge(1, 6, 1, graph);
-    err = addUndirectedEdge(1, 9, 1, graph);
-    err = addUndirectedEdge(10, 9, 1, graph);
-    err = addUndirectedEdge(2, 6, 1, graph);
-    err = addUndirectedEdge(3, 6, 1, graph);
-    err = addUndirectedEdge(8, 6, 1, graph);
-    err = addUndirectedEdge(4, 7, 1, graph);
-    err = addUndirectedEdge(5, 7, 1, graph);
-    //Executa a busca em largura a partir do Marin
-    if(hasError(err)){
-        PrintError(err);
-        return 1;
-    }
-    err = BreadthFirstSearch(graph, 10);
-    int chave = getDictionaryKey("Marin", dict);
-    printf("\nChave: %d\n\n", chave);
-    //Constroi o caminho do Castor para o Marin
-    path = pathTo(4,10,graph,&size);
-    puts("Caminho:");
-    printf("[");
-    for(i=0;i<size;i++){
-        if(i < size - 1)
-            printf("%s -> ", getDictionaryValue(path[i], dict));
-        else
-            printf("%s]\n\n", getDictionaryValue(path[i], dict));
-    }
-    puts("Nó caminho para outro nó");
-    puts("No [Adjacente]");
-    for(i=0;i<graph->nNodes;i++){
-        printf("%s [%s]\n",getDictionaryValue(i, dict), getDictionaryValue(graph->edgeTo[i],dict));
-        printf("%d [%d]\n",i,graph->edgeTo[i]);
-    }
-    //Libera a memória
-    freeGraph(graph);
+    GRAPH *grafo = createGraph();
+    int KBNumber = 0;
+    char *searchName = NULL;
+    
+
+
+    do {
+        operation = menu();
+        switch (*operation) {
+        case 1:
+            /* Inicializar */
+            err = initializeGraph(grafo, grafo->graph, dict);
+            if (hasError(err)) PrintError(err);
+            break;
+        case 2:
+            /* Pesquisar ator e pegar seu numero de Kevin Bacon */
+            printf("\nDigite o nome que deseja buscar !!\nExemplo: Thomsen, Ulrich\n-> ");
+            searchName = (char*) malloc(100);
+            scanf("\n%[^\n]s", searchName);
+            printf("\n");
+            err = getKevinBaconNumber(grafo->graph, dict, searchName, &KBNumber);
+            if (hasError(err)) PrintError(err);
+            free(searchName);
+            break;
+        case 3:
+            /* Consulta média e desvio padrão de todos os números de Kevin Bacon do grafo */
+            printf("Media Aritmética: %f\n", grafo->kevinBaconMedia);
+            printf("Desvio Padrão: %f\n\n", grafo->kevinBaconStandardDeviation);
+            break;
+        case 0:
+            /* Finaliza o programa */
+            printf("\nAguarde, finalizando programa...");
+            freeGraph(grafo->graph);
+            freeError(err);
+            freeDictionary(dict);
+            break;
+        default:
+            ErrorFormat("Codigo invalido", err);
+            PrintError(err);
+            break;
+        }
+    } while (*operation != 0);
+
     return 0;
 }

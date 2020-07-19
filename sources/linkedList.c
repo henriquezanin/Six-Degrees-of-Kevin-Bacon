@@ -176,7 +176,7 @@ int removeLast(List *list, Error *err){
     return removeElement(list->nElements-1,list,err);
 }
 
-//Passar função de comparação e retirar o id
+/* Passar função de comparação e retirar o id */
 void *removeElementById(int id, List *list){
     if(!list)
         return NULL;

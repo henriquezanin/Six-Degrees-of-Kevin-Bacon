@@ -14,7 +14,7 @@
 Dictionary *createDictionary(){
     return (Dictionary*)calloc(1,sizeof(Dictionary));
 }
-//Mudar para strlen string, valgrind dando erro
+
 dictElement *_createDictElem(char *string, int key){
      dictElement *elem = (dictElement*)malloc(sizeof(dictElement));
      elem->key = key;
