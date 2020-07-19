@@ -184,7 +184,6 @@ Error *freeGraph(Graph *graph){
     }
     int i;
     for(i=0;i<graph->nNodes;i++){
-        //err = removeNode(i, graph);
         err = freeNode(graph->list[i]);
         if(hasError(err)){
             ErrorFormat("freeGraph: failed to remove node", err);
