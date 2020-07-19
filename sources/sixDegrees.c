@@ -117,7 +117,6 @@ Error* getKevinBaconNumber(Graph *graph, Dictionary *dict, char *actor, int *KBN
             }
         } else {
             printf("\"%s\"", getDictionaryValue(path[i], dict));
-            // flag++;
         }
     }
     if (flag == 1 || flag == 2) {
